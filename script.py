@@ -1,5 +1,6 @@
 import sendgrid
 import json
+import requests
 
 artists = {}
 
@@ -8,6 +9,18 @@ def init():
 	artists = artistf.read().strip()
 	#print(artists)
 	main()
+
+def get_artist_id(name):
+	#from input get artist id
+	name = name.replace(" ", "+")
+	page = requests.get("https://itunes.apple.com/search?term=" + name)
+	txt = page.text
+	print(txt)
+	dat = json.loads(txt)
+	return dat["results"][0]["artist_id"]
+
+#from artist id get albums
+
 
 def main():
 	'''while True:
