@@ -1,42 +1,38 @@
 import sendgrid
 import json
 import urllib.request
-from sys import argv
-
-artists = {}
+from sys import argv, exit
+from ast import literal_eval
+#HELLYEAH
+testing = False
 
 def init():
 	artistf = open('artists.txt','r+')
-	artists = artistf.read().strip()
-	#print(artists)
+	artists = literal_eval(artistf.read().strip())
 	main()
-
-artists_albums = {}
-artists_subscribers = {}
 
 def subscribe(artist_name, email):
 	id = get_artist_id(artist_name)
-	if id not in artists_subscribers.keys():
-		artists_subscribers[id] = [email]
+	if id not in artists['subscribers']:
+		artists['subscribers'][id] = [email]
 	else:
-		artists_subscribers[id].append(email)
+		artists['subscribers'][id].append(email)
 
 def update():
 	#run this every morn
-	for artist in artists_albums.keys():
-		old_albums = artists_albums[artist]
+	for artist in artists['albums']:
+		old_albums = artists['albums'][artist]
 		new_albums = get_albums(artist)
 		for new_album in new_albums:
 			if new_album not in old_albums:
-				for subscriber in artists_subscribers[artist]:
-					mailuser(subscriber, new_album[artistName], new_album[collectionName], new_album[collectionViewUrl])
-		artists_albums[artist] = new_albums
+				for subscriber in artists['subscribers'][artist]:
+					if testing is False:
+						mailuser(subscriber, new_album[artistName], new_album[collectionName], new_album[collectionViewUrl])
+		artists['albums'][artist] = new_albums
 
 def get_json(url):
 	page = urllib.request.urlopen(url)
-	txt = page.read().decode(page.headers.get_content_charset())
-	dat = json.loads(txt)
-	return dat
+	return json.loads(page.read().decode(page.headers.get_content_charset()))
 
 def get_artist_id(name):
 	#from input get artist id
@@ -77,7 +73,9 @@ def mailuser(address, artist, album, url):
 if 'argv' in globals():
 	if 'cron' in argv:
 		update()
-	else:
+		exit(0)
+	if 'test' in argv:
+		testing = True
 		init()
-else:
-	init()
+		exit(0)
+init()
