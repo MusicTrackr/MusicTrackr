@@ -1,6 +1,6 @@
 import sendgrid
 import json
-import requests
+#import requests
 
 artists = {}
 
@@ -49,6 +49,6 @@ def mailuser(address, artist, newalbum):
 	msg.set_subject("MusicTrackr: New Album Release")
 	msg.set_html("A new album has been released by " + artist + "! Find it on <a href=\"" + newalbum + "\">iTunes</a>.")
 	msg.set_from("notif@musictrackr.com")
-	status, msg = s.send(message)
+	status, msg = s.send(msg)
 
 init()
