@@ -12,7 +12,7 @@ def init():
 
 def get_json(url):
 	page = urllib.request.urlopen(url)
-	txt = page.read()
+	txt = page.read().decode(page.headers.get_content_charset())
 	dat = json.loads(txt)
 	return dat
 
