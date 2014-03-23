@@ -2,15 +2,15 @@ import sendgrid
 import json
 import urllib.request
 from sys import argv, exit
-from ast import literal_eval
 from flask import Flask, request, render_template
 #HELLYEAH
 testing = False
 app = Flask(__name__)
 artists = {} #ids to subscribers, albums
+artistf = open('artists.txt','r+',encoding='utf-8')
+
 def init():
-	artistf = open('artists.txt','r+')
-	artists = literal_eval(artistf.read().strip())
+	artists = eval(artistf.read().strip())
 def subscribe(artist_name, email):
 	id = get_artist_id(artist_name)
 	if id not in artists.keys():
@@ -18,6 +18,7 @@ def subscribe(artist_name, email):
 	if email not in artists[id]['subscribers']:
 		artists[id]['subscribers'].append(email)
 	print(artists[id]["subscribers"])
+	artistf.write(str(artists))
 
 def update():
 	#run this every morn
@@ -30,7 +31,7 @@ def update():
 					if testing is False:
 						mailuser(subscriber, new_album['artistName'], new_album['collectionName'], new_album['collectionViewUrl'])
 		artists[artist]['albums'] = new_albums
-	open('artists.txt','r+').write(artists)
+	artistf.write(str(artists))
 
 def get_json(url):
 	page = urllib.request.urlopen(url)
@@ -82,21 +83,21 @@ if 'argv' in globals():
 		exit(0)
 
 @app.route('/',methods=['GET','POST'])
-def formtest():
-	init()
+def form():
+	#init()
 	if request.method == 'POST':
 		try:
 			subscribe(request.form['artist'],request.form['email'])
-		except:
-			result = 'Sorry, your request could not be completed.'
-			return render_template('index.html',result=result)
-		result = 'You successfully subscribed to that artist.'
+			result = 'You successfully subscribed to that artist.'
+		except Exception as e:
+			result = 'Sorry, your request could not be completed.' + str(e)
 		return render_template('index.html',result=result)
 	return render_template('index.html')
 
-@app.route('/artists.txt')
-def artists():
-	return open('artists.txt','r').read()
+'''@app.route('/artists.txt')
+def artiststxt():
+	artistf.write(str(artists))
+	return artistf.read()'''
 
 if __name__ == '__main__':
 	app.run(debug=True)

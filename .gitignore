@@ -218,3 +218,6 @@ pip-log.txt
 Include/
 Lib/
 Scripts/
+
+#data
+artists.txt
