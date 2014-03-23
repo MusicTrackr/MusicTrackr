@@ -17,7 +17,7 @@ def get_artist_id(name):
 	txt = page.text
 	print(txt)
 	dat = json.loads(txt)
-	return dat["results"][0]["artist_id"]
+	return dat["results"][0]["artistId"]
 
 #from artist id get albums
 
