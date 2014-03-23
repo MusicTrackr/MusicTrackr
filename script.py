@@ -3,32 +3,31 @@ import json
 import urllib.request
 from sys import argv, exit
 from ast import literal_eval
+from flask import Flask, request, render_template
 #HELLYEAH
 testing = False
-
-def init():
-	artistf = open('artists.txt','r+')
-	artists = literal_eval(artistf.read().strip())
-	main()
+app = Flask(__name__)
+artists = {} #ids to subscribers, albums
 
 def subscribe(artist_name, email):
 	id = get_artist_id(artist_name)
-	if id not in artists['subscribers']:
-		artists['subscribers'][id] = [email]
-	else:
-		artists['subscribers'][id].append(email)
+	if id not in artists.keys():
+		artists[id] = {"subscribers":[], "albums":get_albums(id)}
+	if email not in artists[id]['subscribers']:
+		artists[id]['subscribers'].append(email)
+	print(artists[id]["subscribers"])
 
 def update():
 	#run this every morn
-	for artist in artists['albums']:
-		old_albums = artists['albums'][artist]
+	for artist in artists:
+		old_albums = artists[artist]['albums']
 		new_albums = get_albums(artist)
 		for new_album in new_albums:
 			if new_album not in old_albums:
-				for subscriber in artists['subscribers'][artist]:
+				for subscriber in artists[artist]['subscribers']:
 					if testing is False:
 						mailuser(subscriber, new_album[artistName], new_album[collectionName], new_album[collectionViewUrl])
-		artists['albums'][artist] = new_albums
+		artists[artist]['albums'] = new_albums
 
 def get_json(url):
 	page = urllib.request.urlopen(url)
@@ -36,9 +35,12 @@ def get_json(url):
 
 def get_artist_id(name):
 	#from input get artist id
-	name = name.replace(" ", "+")
-	dat = get_json("https://itunes.apple.com/search?term=" + name)
-	return dat["results"][0]["artistId"]
+	plus_name = name.replace(" ", "+")
+	dat = get_json("https://itunes.apple.com/search?term=" + plus_name)
+	i = 0
+	while dat["results"][i]["artistName"].lower() != name.lower():
+		i += 1
+	return str(dat["results"][i]["artistId"])
 
 #from artist id get albums
 def get_albums(id):
@@ -49,13 +51,6 @@ def get_albums(id):
 		if result["wrapperType"] == "collection":
 			albums.append(result)
 	return albums
-
-def main():
-	'''while True:
-		for artist in artists:
-			for subscriber in artist['subscribers']:
-				if artist['newalbum'] is not False:
-					mailuser(subscriber['email'],artist,newalbum)'''
 
 def mailuser(address, artist, album, url):
 	#address: email address (string)
@@ -70,12 +65,25 @@ def mailuser(address, artist, album, url):
 	msg.set_from("notif@musictrackr.com")
 	status, msg = s.send(msg)
 
+def test():
+	subscribe("Skrillex", 'ezra.m.brooks@gmail.com')
+	artists[get_artist_id("Skrillex")]["albums"].remove(0)
+	update()
+
 if 'argv' in globals():
 	if 'cron' in argv:
 		update()
 		exit(0)
 	if 'test' in argv:
 		testing = True
-		init()
 		exit(0)
-init()
+
+@app.route('/',methods=['GET','POST'])
+def formtest():
+	if request.method == 'POST':
+		subscribe(request.form['testinput'],'ezra.m.brooks@gmail.com')
+		result = 'success'
+		return render_template('index.html',result=result)
+	return render_template('index.html')
+if __name__ == '__main__':
+	app.run(debug=True)
