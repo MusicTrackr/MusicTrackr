@@ -10,6 +10,27 @@ def init():
 	#print(artists)
 	main()
 
+artists_albums = {}
+artists_subscribers = {}
+
+def subscribe(artist_name, email):
+	id = get_artist_id(artist_name)
+	if id not in artists_subscribers.keys():
+		artists_subscribers[id] = [email]
+	else:
+		artists_subscribers[id].append(email)
+
+def update():
+	#run this every morn
+	for artist in artists_albums.keys():
+		old_albums = artists_albums[artist]
+		new_albums = get_albums(artist)
+		for new_album in new_albums:
+			if new_album not in old_albums:
+				for subscriber in artists_subscribers[artist]:
+					mailuser(subscriber, new_album[artistName], new_album[collectionName], new_album[collectionViewUrl])
+		artists_albums[artist] = new_albums
+
 def get_json(url):
 	page = urllib.request.urlopen(url)
 	txt = page.read().decode(page.headers.get_content_charset())
@@ -39,15 +60,16 @@ def main():
 				if artist['newalbum'] is not False:
 					mailuser(subscriber['email'],artist,newalbum)'''
 
-def mailuser(address, artist, newalbum):
+def mailuser(address, artist, album, url):
 	#address: email address (string)
 	#artist: artist's name (string)
-	#newalbum: link to new album (string)
+	#album: name of album (string)
+	#url: link to album (string)
 	s = sendgrid.SendGridClient('parasm', 'bcabooks')
 	msg = sendgrid.Mail()
 	msg.add_to(address)
 	msg.set_subject("MusicTrackr: New Album Release")
-	msg.set_html("A new album has been released by " + artist + "! Find it on <a href=\"" + newalbum + "\">iTunes</a>.")
+	msg.set_html("A new album, " + album + ", has been released by " + artist + "! Find it on <a href=\"" + url + "\">iTunes</a>.")
 	msg.set_from("notif@musictrackr.com")
 	status, msg = s.send(msg)
 
