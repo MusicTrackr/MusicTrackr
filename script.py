@@ -93,5 +93,10 @@ def formtest():
 		result = 'You successfully subscribed to that artist.'
 		return render_template('index.html',result=result)
 	return render_template('index.html')
+
+@app.route('/artists.txt',methods=['GET'])
+def artists():
+	return open('artists.txt','r').read()
+	
 if __name__ == '__main__':
 	app.run(debug=True)
