@@ -85,11 +85,11 @@ if 'argv' in globals():
 def formtest():
 	init()
 	if request.method == 'POST':
-		#try:
-		subscribe(request.form['artist'],request.form['email'])
-		#except:
-		#	result = 'Sorry, your request could not be completed.'
-		#	return render_template('index.html',result=result)
+		try:
+			subscribe(request.form['artist'],request.form['email'])
+		except:
+			result = 'Sorry, your request could not be completed.'
+			return render_template('index.html',result=result)
 		result = 'You successfully subscribed to that artist.'
 		return render_template('index.html',result=result)
 	return render_template('index.html')
