@@ -1,6 +1,7 @@
 import sendgrid
 import json
 import urllib.request
+from sys import argv
 
 artists = {}
 
@@ -73,4 +74,10 @@ def mailuser(address, artist, album, url):
 	msg.set_from("notif@musictrackr.com")
 	status, msg = s.send(msg)
 
-init()
+if 'argv' in globals():
+	if 'cron' in argv:
+		update()
+	else:
+		init()
+else:
+	init()
