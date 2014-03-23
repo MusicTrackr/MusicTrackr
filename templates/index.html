@@ -1,0 +1,27 @@
+<html>
+<head>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<link href="{{url_for('static', filename='Bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
+</head>
+<body>
+	<div class="container">
+	<div class="jumbotron" style="background-color:#113;">
+	<div id="title">MusicTrackr</div>
+	<div id="subtitle">Never miss an album again.</div>
+	<form method="POST" action="#">
+		<input type="text" name="email" id="emailinput" placeholder="E-mail address"><br/>
+		<input type="text" name="artist" id="artistinput" placeholder="Artist to track"><button type="submit">Submit</button>
+	</form>
+	<div>{{result}}</div>
+	</div>
+	<div class="page-header">
+		<h1>What is MusicTrackr?</h1>
+	</div>
+	<p style="font-size:18px;">MusicTrackr is a great way to <em>Never miss an album again</em>. It was built at the hackBCA 24-hour hackathon with a simple mission in mind; keep fans up-to-date with their favourite artists' new releases. Powered by iTunes and SendGrid, simply enter your e-mail address and the name of the artist whose releases you'd like to subscribe to and you're off. You'll never be a month late to today's music again.</p>
+	</div>
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{{ url_for('static', filename='Bootstrap/js/bootstrap.min.js') }}"></script>
+</body>
+</html>
