@@ -1,6 +1,6 @@
 import sendgrid
 import json
-#import requests
+import urllib.request
 
 artists = {}
 
@@ -11,8 +11,8 @@ def init():
 	main()
 
 def get_json(url):
-	page = requests.get(url)
-	txt = page.text
+	page = urllib.request.urlopen(url)
+	txt = page.read()
 	dat = json.loads(txt)
 	return dat
 
