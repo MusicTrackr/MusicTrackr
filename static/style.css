@@ -20,9 +20,3 @@ input{
 	font-size:20px;
 	text-align:center;
 }
-#container{
-	background-color:#113;
-	height:100vh;
-	width:100vw;
-	padding:35vh 20vw 20vh 20vw;
-}
