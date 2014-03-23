@@ -26,7 +26,7 @@ def update():
 			if new_album not in old_albums:
 				for subscriber in artists[artist]['subscribers']:
 					if testing is False:
-						mailuser(subscriber, new_album[artistName], new_album[collectionName], new_album[collectionViewUrl])
+						mailuser(subscriber, new_album['artistName'], new_album['collectionName'], new_album['collectionViewUrl'])
 		artists[artist]['albums'] = new_albums
 
 def get_json(url):
@@ -67,7 +67,7 @@ def mailuser(address, artist, album, url):
 
 def test():
 	subscribe("Skrillex", 'ezra.m.brooks@gmail.com')
-	artists[get_artist_id("Skrillex")]["albums"].remove(0)
+	artists[get_artist_id("Skrillex")]["albums"].pop(0)
 	update()
 
 if 'argv' in globals():
@@ -80,6 +80,7 @@ if 'argv' in globals():
 
 @app.route('/',methods=['GET','POST'])
 def formtest():
+	test()
 	if request.method == 'POST':
 		subscribe(request.form['testinput'],'ezra.m.brooks@gmail.com')
 		result = 'success'
