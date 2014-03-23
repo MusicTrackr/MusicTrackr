@@ -80,9 +80,9 @@ if 'argv' in globals():
 
 @app.route('/',methods=['GET','POST'])
 def formtest():
-	test()
+	#test()
 	if request.method == 'POST':
-		subscribe(request.form['testinput'],'ezra.m.brooks@gmail.com')
+		subscribe(request.form['artist'],request.form['email'])
 		result = 'success'
 		return render_template('index.html',result=result)
 	return render_template('index.html')
