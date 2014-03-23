@@ -3,6 +3,7 @@ import json
 import urllib.request
 from sys import argv, exit
 from flask import Flask, request, render_template
+
 #HELLYEAH
 testing = False
 app = Flask(__name__)
@@ -17,8 +18,10 @@ def subscribe(artist_name, email):
 		artists[id] = {"subscribers":[], "albums":get_albums(id)}
 	if email not in artists[id]['subscribers']:
 		artists[id]['subscribers'].append(email)
-	print(artists[id]["subscribers"])
 	artistf.write(str(artists))
+	if testing is True:
+		artists[get_artist_id(artist_name)]["albums"].pop(0)
+		update()
 
 def update():
 	#run this every morn
@@ -69,25 +72,19 @@ def mailuser(address, artist, album, url):
 	msg.set_from("notif@musictrackr.com")
 	status, msg = s.send(msg)
 
-def test():
-	subscribe("Skrillex", 'ezra.m.brooks@gmail.com')
-	artists[get_artist_id("Skrillex")]["albums"].pop(0)
-	update()
-
-if 'argv' in globals():
-	if 'cron' in argv:
-		update()
-		exit(0)
-	if 'test' in argv:
-		testing = True
-		exit(0)
-
 @app.route('/',methods=['GET','POST'])
 def form():
 	#init()
 	if request.method == 'POST':
 		try:
-			subscribe(request.form['artist'],request.form['email'])
+			if 'test(' in request.form['email']:
+				testing = True
+				email = request.form['email'][len('test('):len(request.form['email'])-1]
+				print('test')
+				print(email)
+				subscribe(request.form['artist'],email)
+			else:
+				subscribe(request.form['artist'],request.form['email'])
 			result = 'You successfully subscribed to that artist.'
 		except Exception as e:
 			result = 'Sorry, your request could not be completed.' + str(e)
