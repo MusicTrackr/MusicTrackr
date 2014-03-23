@@ -8,7 +8,9 @@ from flask import Flask, request, render_template
 testing = False
 app = Flask(__name__)
 artists = {} #ids to subscribers, albums
-
+def init():
+	artistf = open('artists.txt','r+')
+	artists = literal_eval(artistf.read().strip())
 def subscribe(artist_name, email):
 	id = get_artist_id(artist_name)
 	if id not in artists.keys():
@@ -28,6 +30,7 @@ def update():
 					if testing is False:
 						mailuser(subscriber, new_album['artistName'], new_album['collectionName'], new_album['collectionViewUrl'])
 		artists[artist]['albums'] = new_albums
+	open('artists.txt','r+').write(artists)
 
 def get_json(url):
 	page = urllib.request.urlopen(url)
@@ -80,7 +83,7 @@ if 'argv' in globals():
 
 @app.route('/',methods=['GET','POST'])
 def formtest():
-	#test()
+	init()
 	if request.method == 'POST':
 		subscribe(request.form['artist'],request.form['email'])
 		result = 'success'
