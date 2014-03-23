@@ -20,3 +20,9 @@ input{
 	font-size:20px;
 	text-align:center;
 }
+#result{
+	width:100%;
+	color:#EEE;
+	font-size:20px;
+	text-align:center;
+}
