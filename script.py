@@ -3,6 +3,7 @@ import json
 import urllib.request
 from sys import argv, exit
 from flask import Flask, request, render_template
+from ast import literal_eval
 
 #HELLYEAH
 testing = False
@@ -11,7 +12,7 @@ artists = {} #ids to subscribers, albums
 artistf = open('artists.txt','r+',encoding='utf-8')
 
 def init():
-	artists = eval(artistf.read().strip())
+	artists = literal_eval(artistf.read().strip())
 def subscribe(artist_name, email):
 	id = get_artist_id(artist_name)
 	if id not in artists.keys():
@@ -31,8 +32,7 @@ def update():
 		for new_album in new_albums:
 			if new_album not in old_albums:
 				for subscriber in artists[artist]['subscribers']:
-					if testing is False:
-						mailuser(subscriber, new_album['artistName'], new_album['collectionName'], new_album['collectionViewUrl'])
+					mailuser(subscriber, new_album['artistName'], new_album['collectionName'], new_album['collectionViewUrl'])
 		artists[artist]['albums'] = new_albums
 	artistf.write(str(artists))
 
@@ -56,6 +56,7 @@ def get_albums(id):
 	dat = get_json("https://itunes.apple.com/lookup?id=" + id + "&entity=album")
 	for result in dat["results"]:
 		if result["wrapperType"] == "collection":
+			del result['copyright']
 			albums.append(result)
 	return albums
 
@@ -71,6 +72,7 @@ def mailuser(address, artist, album, url):
 	msg.set_html("A new album, " + album + ", has been released by " + artist + "! Find it on <a href=\"" + url + "\">iTunes</a>.")
 	msg.set_from("notif@musictrackr.com")
 	status, msg = s.send(msg)
+	print("Mailed user with status " + str(status))
 
 @app.route('/',methods=['GET','POST'])
 def form():
@@ -78,6 +80,7 @@ def form():
 	if request.method == 'POST':
 		try:
 			if 'test(' in request.form['email']:
+				global testing
 				testing = True
 				email = request.form['email'][len('test('):len(request.form['email'])-1]
 				print('test')
