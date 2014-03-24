@@ -1,13 +1,12 @@
 import sendgrid
 import json
 import urllib.request
-from sys import argv, exit
 from flask import Flask, request, render_template
 from ast import literal_eval
 
 #HELLYEAH
-testing = False
 app = Flask(__name__)
+githuburl = 'https://www.github.com/kaikue/MusicAlert'
 artists = {} #ids to subscribers, albums
 artistf = open('artists.txt','w+')
 
@@ -25,7 +24,7 @@ def subscribe(artist_name, email):
 	if email not in artists[id]['subscribers']:
 		artists[id]['subscribers'].append(email)
 	artistf.write(str(artists))
-	if testing is True:
+	if 'testing' in globals() and testing is True:
 		artists[get_artist_id(artist_name)]["albums"].pop(0)
 		update()
 
@@ -92,11 +91,14 @@ def form():
 				print('test')
 				print(email)
 				subscribe(request.form['artist'],email)
+				result = 'You successfully subscribed to that artist.'
+			elif request.form['email'].replace(' ','') = '':
+				result = 'Please enter a search term.'
 			else:
 				subscribe(request.form['artist'],request.form['email'])
-			result = 'You successfully subscribed to that artist.'
+				result = 'You successfully subscribed to that artist.'
 		except Exception as e:
-			result = 'Sorry, your request could not be completed.' + str(e)
+			result = 'Sorry, your request could not be completed. ' + '<br/>' + 'The error returned was: ' + str(e) + '<br/><a href="{{githuburl}}/issues">Report this error</a>'
 		return render_template('index.html',result=result)
 	return render_template('index.html')
 
