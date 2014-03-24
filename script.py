@@ -9,10 +9,15 @@ from ast import literal_eval
 testing = False
 app = Flask(__name__)
 artists = {} #ids to subscribers, albums
-artistf = open('artists.txt','r+',encoding='utf-8')
+artistf = open('artists.txt','w+')
 
 def init():
-	artists = literal_eval(artistf.read().strip())
+	afcontents = literal_eval(artistf.read().strip())
+	if type(afcontents) is dict:
+		artists = afcontents
+	else:
+		print('Artists file empty. Running with empty original dict..')
+
 def subscribe(artist_name, email):
 	id = get_artist_id(artist_name)
 	if id not in artists.keys():
