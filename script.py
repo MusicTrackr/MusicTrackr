@@ -1,24 +1,35 @@
 import sendgrid
 import json
 import urllib.request
+from datetime import datetime, timedelta
 from flask import Flask, request, render_template
 from ast import literal_eval
+from threading import Timer
 #HELLYEAH
+artistf = None
+artists = {}
 app = Flask(__name__)
 
 def init():
-	global githuburl = 'https://www.github.com/kaikue/MusicAlert'
+	global githuburl
+	githuburl = 'https://www.github.com/kaikue/MusicAlert'
 	try:
-		global artistf = open('artists.txt','r+')
+		artistf = open('artists.txt','r+')
 		afcontents = literal_eval(artistf.read().strip())
+	except (SyntaxError,ValueError):
+		afcontents = ''
 	except IOError:
-		global artistf = open('artists.txt','w+')
+		artistf = open('artists.txt','w+')
 		afcontents = ''
 	if type(afcontents) is dict:
-		global artists = afcontents
+		artists = afcontents
 	else:
 		print('Artists file empty. Running with empty dict..')
-		global artists = {}
+		artists = {}
+
+	today = datetime.today()
+	t = Timer(timedelta(days=1,hours=-today.hour,minutes=-today.minute,seconds=-today.second,microseconds=-today.microsecond).total_seconds(),update)
+	t.start()
 	app.run(debug=True)
 
 def subscribe(artist_name, email):
