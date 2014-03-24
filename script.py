@@ -9,12 +9,10 @@ app = Flask(__name__)
 def init():
 	global githuburl = 'https://www.github.com/kaikue/MusicAlert'
 	try:
-		artistf = open('artists.txt','r')
+		global artistf = open('artists.txt','r+')
 		afcontents = literal_eval(artistf.read().strip())
-		artistf.close()
 	except IOError:
-		artistf = open('artists.txt','x')
-		artistf.close()
+		global artistf = open('artists.txt','w+')
 		afcontents = ''
 	if type(afcontents) is dict:
 		global artists = afcontents
@@ -29,10 +27,12 @@ def subscribe(artist_name, email):
 		artists[id] = {"subscribers":[], "albums":get_albums(id)}
 	if email not in artists[id]['subscribers']:
 		artists[id]['subscribers'].append(email)
-	artistf.write(str(artists))
 	if 'testing' in globals() and testing is True:
 		artists[get_artist_id(artist_name)]["albums"].pop(0)
 		update()
+	else:
+		artistf.truncate()
+		artistf.write(str(artists))
 
 def update():
 	#run this every morn
@@ -44,6 +44,7 @@ def update():
 				for subscriber in artists[artist]['subscribers']:
 					mailuser(subscriber, new_album['artistName'], new_album['collectionName'], new_album['collectionViewUrl'])
 		artists[artist]['albums'] = new_albums
+	artistf.truncate()
 	artistf.write(str(artists))
 
 def get_json(url):
@@ -86,7 +87,7 @@ def mailuser(address, artist, album, url):
 	print("Mailed user with status " + str(status))
 
 @app.route('/',methods=['GET','POST'])
-def form():
+def home():
 	page = 'Home'
 	if request.method == 'POST':
 		try:
@@ -98,11 +99,15 @@ def form():
 				print(email)
 				subscribe(request.form['artist'],email)
 				result = 'You successfully subscribed to that artist.'
-			elif request.form['email'].replace(' ','') = '':
-				result = 'Please enter a search term.'
+			elif request.form['email'].replace(' ','') == '' or request.form['email'].find('@') == -1 or request.form['email'][request.form['email'].find('@'):len(request.form['email'])-1].find('.') == -1:
+				result = 'Please enter a valid email address.'
+			elif request.form['artist'].replace(' ','') == '':
+				result = 'Please enter a valid artist.'
 			else:
 				subscribe(request.form['artist'],request.form['email'])
 				result = 'You successfully subscribed to that artist.'
+		except URLError:
+			result = 'Sorry, we couldn\'t find data on the artist you entered.'
 		except Exception as e:
 			result = 'Sorry, your request could not be completed. ' + '<br/>' + 'The error returned was: ' + str(e) + '<br/><a href="{{githuburl}}/issues">Report this error</a>'
 		return render_template('index.html',result=result)
@@ -110,8 +115,11 @@ def form():
 
 '''@app.route('/artists.txt')
 def artiststxt():
+	artistf.truncate()
 	artistf.write(str(artists))
-	return artistf.read()'''
+	artistf.flush()
+	afcontents = artistf.read()
+	return afcontents'''
 
 if __name__ == '__main__':
 	init()
