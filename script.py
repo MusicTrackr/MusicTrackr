@@ -8,8 +8,14 @@ app = Flask(__name__)
 
 def init():
 	global githuburl = 'https://www.github.com/kaikue/MusicAlert'
-	global artistf = open('artists.txt','w+')
-	afcontents = literal_eval(artistf.read().strip())
+	try:
+		artistf = open('artists.txt','r')
+		afcontents = literal_eval(artistf.read().strip())
+		artistf.close()
+	except IOError:
+		artistf = open('artists.txt','x')
+		artistf.close()
+		afcontents = ''
 	if type(afcontents) is dict:
 		global artists = afcontents
 	else:
@@ -48,10 +54,11 @@ def get_artist_id(name):
 	#from input get artist id
 	plus_name = name.replace(" ", "+")
 	dat = get_json("https://itunes.apple.com/search?term=" + plus_name)
-	i = 0
-	while dat["results"][i]["artistName"].lower() != name.lower():
-		i += 1
-	return str(dat["results"][i]["artistId"])
+	for i in range(0,len(dat['results'])-1):
+		if dat["results"][i]["artistName"].lower() == name.lower():
+			artistId = dat['results'][i]['artistId']
+			break
+	return artistId
 
 #from artist id get albums
 def get_albums(id):
