@@ -1,8 +1,9 @@
 <html>
 <head>
-<title>MusicTrackr - {{page}}</title>
+<title>MusicTrackr</title>
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
 <link href="{{url_for('static', filename='Bootstrap/css/bootstrap.min.css')}}" rel="stylesheet">
+<link href="{{url_for('static', filename='Bootstrap/css/bootstrap-theme.min.css')}}" rel="stylesheet">
 </head>
 <body>
 	<div class="container">
@@ -12,7 +13,7 @@
 	<form method="POST" action="#">
 		<input type="text" name="email" id="emailinput" placeholder="E-mail address"><br/>
 		<input type="text" name="artist" id="artistinput" placeholder="Artist to track"><br/>
-		<button type="submit">Submit</button>
+		<button class="btn btn-default" type="submit" style="margin-top:10px">Submit</button>
 	</form>
 	<br/>
 	<div id="result">{{result}}</div>

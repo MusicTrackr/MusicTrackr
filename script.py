@@ -99,7 +99,6 @@ def mailuser(address, artist, album, url):
 
 @app.route('/',methods=['GET','POST'])
 def home():
-	page = 'Home'
 	if request.method == 'POST':
 		try:
 			if 'test(' in request.form['email']:
