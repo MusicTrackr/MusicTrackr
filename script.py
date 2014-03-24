@@ -3,19 +3,19 @@ import json
 import urllib.request
 from flask import Flask, request, render_template
 from ast import literal_eval
-
 #HELLYEAH
 app = Flask(__name__)
-githuburl = 'https://www.github.com/kaikue/MusicAlert'
-artists = {} #ids to subscribers, albums
-artistf = open('artists.txt','w+')
 
 def init():
+	global githuburl = 'https://www.github.com/kaikue/MusicAlert'
+	global artistf = open('artists.txt','w+')
 	afcontents = literal_eval(artistf.read().strip())
 	if type(afcontents) is dict:
-		artists = afcontents
+		global artists = afcontents
 	else:
-		print('Artists file empty. Running with empty original dict..')
+		print('Artists file empty. Running with empty dict..')
+		global artists = {}
+	app.run(debug=True)
 
 def subscribe(artist_name, email):
 	id = get_artist_id(artist_name)
@@ -80,7 +80,6 @@ def mailuser(address, artist, album, url):
 
 @app.route('/',methods=['GET','POST'])
 def form():
-	#init()
 	page = 'Home'
 	if request.method == 'POST':
 		try:
@@ -108,4 +107,4 @@ def artiststxt():
 	return artistf.read()'''
 
 if __name__ == '__main__':
-	app.run(debug=True)
+	init()
