@@ -58,6 +58,8 @@ def update():
 		artists[artist]['albums'] = newAlbums
 	artistf.truncate()
 	artistf.write(str(artists))
+	t = Timer(timedelta(days=1,hours=-today.hour,minutes=-today.minute,seconds=-today.second,microseconds=-today.microsecond).total_seconds(),update)
+	t.start()
 
 def getJson(url):
 	page = urllib.request.urlopen(url)
