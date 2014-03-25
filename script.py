@@ -142,6 +142,7 @@ def artiststxt():
 def artistPage():
 	artistName = request.args['artist']
 	print(artistName)
+	return render_template('index.html') #just don't 404 bro
 
 if __name__ == '__main__':
 	init()
