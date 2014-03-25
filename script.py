@@ -1,11 +1,13 @@
-import sendgrid
+#builtins
 import json
 import urllib.request
 from urllib.error import URLError
 from datetime import datetime, timedelta
-from flask import Flask, request, render_template
 from ast import literal_eval
 from threading import Timer
+#dependencies
+import sendgrid
+from flask import Flask, request, render_template
 #HELLYEAH
 app = Flask(__name__)
 
@@ -16,18 +18,16 @@ def init():
 	githuburl = 'https://www.github.com/kaikue/MusicAlert'
 	try:
 		artistf = open('artists.txt','r+')
-		afcontents = literal_eval(artistf.read().strip())
-		if type(afcontents) is dict:
-			artists = afcontents
-		else:
-			print('Artists file empty. Running with empty dict..')
-			artists = {}
-	except (SyntaxError,ValueError):
-		afcontents = ''
+		artists = literal_eval(artistf.read().strip())
+	except (SyntaxError,ValueError,TypeError):
+		print('Literal_eval error.')
+		artistf = open('artists.txt','w+')
+		artists = {}
 	except IOError:
 		artistf = open('artists.txt','w+')
-		afcontents = ''
-
+		artists = {}
+	if artists == {}:
+		print('Artists file empty or corrupt. Running with empty dict..')
 	today = datetime.today()
 	t = Timer(timedelta(days=1,hours=-today.hour,minutes=-today.minute,seconds=-today.second,microseconds=-today.microsecond).total_seconds(),update)
 	t.start()
