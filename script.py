@@ -1,31 +1,32 @@
 import sendgrid
 import json
 import urllib.request
+from urllib.error import URLError
 from datetime import datetime, timedelta
 from flask import Flask, request, render_template
 from ast import literal_eval
 from threading import Timer
 #HELLYEAH
-artistf = None
-artists = {}
 app = Flask(__name__)
 
 def init():
 	global githuburl
+	global artistf
+	global artists
 	githuburl = 'https://www.github.com/kaikue/MusicAlert'
 	try:
 		artistf = open('artists.txt','r+')
 		afcontents = literal_eval(artistf.read().strip())
+		if type(afcontents) is dict:
+			artists = afcontents
+		else:
+			print('Artists file empty. Running with empty dict..')
+			artists = {}
 	except (SyntaxError,ValueError):
 		afcontents = ''
 	except IOError:
 		artistf = open('artists.txt','w+')
 		afcontents = ''
-	if type(afcontents) is dict:
-		artists = afcontents
-	else:
-		print('Artists file empty. Running with empty dict..')
-		artists = {}
 
 	today = datetime.today()
 	t = Timer(timedelta(days=1,hours=-today.hour,minutes=-today.minute,seconds=-today.second,microseconds=-today.microsecond).total_seconds(),update)
@@ -65,18 +66,17 @@ def get_json(url):
 def get_artist_id(name):
 	#from input get artist id
 	plus_name = name.replace(" ", "+")
-	dat = get_json("https://itunes.apple.com/search?term=" + plus_name)
+	dat = get_json("https://itunes.apple.com/search?term=" + plus_name + '&entity=musicArtist')
 	for i in range(0,len(dat['results'])-1):
 		if dat["results"][i]["artistName"].lower() == name.lower():
 			artistId = dat['results'][i]['artistId']
-			break
-	return artistId
+			return artistId
 
 #from artist id get albums
 def get_albums(id):
-	#id is a string
+	#id is NOT a string
 	albums = []
-	dat = get_json("https://itunes.apple.com/lookup?id=" + id + "&entity=album")
+	dat = get_json("https://itunes.apple.com/lookup?id=" + str(id) + "&entity=album")
 	for result in dat["results"]:
 		if result["wrapperType"] == "collection":
 			del result['copyright']
@@ -119,7 +119,8 @@ def home():
 		except URLError:
 			result = 'Sorry, we couldn\'t find data on the artist you entered.'
 		except Exception as e:
-			result = 'Sorry, your request could not be completed. ' + '<br/>' + 'The error returned was: ' + str(e) + '<br/><a href="{{githuburl}}/issues">Report this error</a>'
+			print(str(e))
+			result = 'Sorry, your request could not be completed. The error returned was: ' + str(e)
 		return render_template('index.html',result=result)
 	return render_template('index.html')
 
