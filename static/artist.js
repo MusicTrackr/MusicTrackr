@@ -1,11 +1,15 @@
 function init(){
-	window.canvas = document.getElementById('graph')
+	var canvas = document.getElementById('graph').getContext('2d')
 	var artistapi = new createXHR(parseartist);
-	artistapi.xhr.open('GET','http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist='+artistName+'&api_key=cfd308fec04046d826ca5806015a529a&format=json',false);
-	artist.api.xhr.send();
+	artistapi.xhr.open('GET','http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist='+artistName.replace(' ','+')+'&api_key=cfd308fec04046d826ca5806015a529a&format=json',false);
+	artistapi.xhr.send();
 }
 function parseartist(data){
-	var icon = //whatever the JSON name for lg icon is, I CAN'T ACCESS THE API THROUGH THE RED CLAY PROXY
+	var artist = {
+		icon: //whatever the JSON name for log icon is, I CAN'T ACCESS THE API THROUGH THE RED CLAY PROXY
+		plays: //see above
+	}
+	document.getElementById('plays').innerHTML = artist.plays
 }
 function createXHR(callback){
 	this.callback = callback;
@@ -14,7 +18,7 @@ function createXHR(callback){
 	} else if (window.ActiveXObject){
     	this.xhr = new ActiveXObject("Microsoft.XMLHTTP");
 	} else{
-		alert('I can\'t seem to find a way to send an XHR!');
+		alert('Can\'t find a way to send an XHR!');
 	};
 	that = this;
 	this.xhr.onload = function(){
