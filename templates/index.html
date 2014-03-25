@@ -16,7 +16,12 @@
 		<button class="btn btn-default" type="submit" style="margin-top:10px">Submit</button>
 	</form>
 	<br/>
-	<div id="result">{{result}}</div>
+	{% if error %}
+	<div class="alert alert-danger" id="error">{{error}}</div>
+	{% endif %}
+	{% if success %}
+	<div class="alert alert-success" id="success">{{success}}</div>
+	{% endif %}
 	</div>
 	<div class="page-header">
 		<h1>What is MusicTrackr?</h1>

@@ -23,7 +23,7 @@ def init():
 		print('Literal_eval error.')
 		artistf = open('artists.txt','w+')
 		artists = {}
-	except IOError:
+	except FileNotFoundError:
 		artistf = open('artists.txt','w+')
 		artists = {}
 	if artists == {}:
@@ -108,20 +108,26 @@ def home():
 				print('test')
 				print(email)
 				subscribe(request.form['artist'],email)
-				result = 'You successfully subscribed to that artist.'
+				success = 'You successfully subscribed to that artist.'
+				error = None
 			elif request.form['email'].replace(' ','') == '' or request.form['email'].find('@') == -1 or request.form['email'][request.form['email'].find('@'):len(request.form['email'])-1].find('.') == -1:
-				result = 'Please enter a valid email address.'
+				error = 'Please enter a valid email address.'
+				success = None
 			elif request.form['artist'].replace(' ','') == '':
-				result = 'Please enter a valid artist.'
+				error = 'Please enter a valid artist.'
+				success = None
 			else:
 				subscribe(request.form['artist'],request.form['email'])
-				result = 'You successfully subscribed to that artist.'
+				success = 'You successfully subscribed to that artist.'
+				error = None
 		except URLError:
-			result = 'Sorry, we couldn\'t find data on the artist you entered.'
+			error = 'Sorry, we couldn\'t find data on the artist you entered.'
+			success = None
 		except Exception as e:
 			print(str(e))
-			result = 'Sorry, your request could not be completed. The error returned was: ' + str(e)
-		return render_template('index.html',result=result)
+			error = 'Sorry, your request could not be completed. The error returned was: ' + str(e)
+			success = None
+		return render_template('index.html',error=error,success=success)
 	return render_template('index.html')
 
 '''@app.route('/artists.txt')
