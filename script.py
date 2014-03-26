@@ -17,8 +17,12 @@ def init():
 	global artists
 	global lastfmkey
 	githubUrl = 'https://www.github.com/kaikue/MusicAlert'
-	with open('static/lastfmkey.json','r') as f:
-		lastfmkey = json.loads(f.read())['apikey']
+	try:
+		with open('static/lastfmkey.json','r') as f:
+			lastfmkey = json.loads(f.read())['apikey']
+	except:
+		print('No last.fm API key!')
+		raise SystemExit
 	try:
 		artistf = open('artists.txt','r+')
 		artists = literal_eval(artistf.read().strip())
