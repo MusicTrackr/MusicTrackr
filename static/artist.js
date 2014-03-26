@@ -6,7 +6,7 @@ function init(){
 }
 function parseartist(data){
 	var artist = {
-		'icon': data['artist']['image'][2]['#text'],
+		'icon': data['artist']['image'][data['artist']['image'].length-1]['#text'],
 		'plays': data['artist']['stats']['playcount']
 	}
 	document.getElementById('plays').innerHTML = artist.plays

@@ -18,3 +18,5 @@ This project requires a last.fm API key/account for certain artist-tracking func
 	"apisecret":"your_api_secret_here"
 }
 ```
+  
+In reality, nobody's sure why you would ever use MusicTrackr for any artist other than Skrillex. And by "nobody," we mean "anyone who isn't [Kai](https://www.github.com/kaikue)."
