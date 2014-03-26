@@ -12,6 +12,7 @@ input{
 	border-radius:4px;
 }
 #title{
+	font-family:Arial;
 	width:100%;
 	color:white;
 	font-size:40px;
