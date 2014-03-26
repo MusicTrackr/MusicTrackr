@@ -6,10 +6,11 @@ function init(){
 }
 function parseartist(data){
 	var artist = {
-		icon: //whatever the JSON name for log icon is, I CAN'T ACCESS THE API THROUGH THE RED CLAY PROXY
-		plays: //see above
+		'icon': data['artist']['image'][2]['#text'],
+		'plays': data['artist']['stats']['playcount']
 	}
 	document.getElementById('plays').innerHTML = artist.plays
+	document.getElementById('icon').innerHTML = '<img src='+artist.icon+'>'
 }
 function createXHR(callback){
 	this.callback = callback;
@@ -22,7 +23,9 @@ function createXHR(callback){
 	};
 	that = this;
 	this.xhr.onload = function(){
-		that.callback.call(this,eval(that.xhr.responseText));
+		that.callback.call(this,JSON.parse(that.xhr.responseText));
 	};
 };
-init()
+window.onload = function(){
+	init();
+}
