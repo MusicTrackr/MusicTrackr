@@ -221,3 +221,5 @@ Scripts/
 
 #data
 artists.txt
+#hide api key!
+static/lastfmkey.json

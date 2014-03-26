@@ -1,7 +1,7 @@
 function init(){
 	var canvas = document.getElementById('graph').getContext('2d')
 	var artistapi = new createXHR(parseartist);
-	artistapi.xhr.open('GET','http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist='+artistName.replace(' ','+')+'&api_key=cfd308fec04046d826ca5806015a529a&format=json',false);
+	artistapi.xhr.open('GET','http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist='+artistName.replace(' ','+')+'&api_key='+lastfmkey+'&format=json',false);
 	artistapi.xhr.send();
 }
 function parseartist(data){

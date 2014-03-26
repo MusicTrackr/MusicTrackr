@@ -15,7 +15,10 @@ def init():
 	global githubUrl
 	global artistf
 	global artists
+	global lastfmkey
 	githubUrl = 'https://www.github.com/kaikue/MusicAlert'
+	with open('static/lastfmkey.json','r') as f:
+		lastfmkey = json.loads(f.read())['apikey']
 	try:
 		artistf = open('artists.txt','r+')
 		artists = literal_eval(artistf.read().strip())
@@ -143,8 +146,8 @@ def artiststxt():
 @app.route('/artist')
 def artistPage():
 	artistName = request.args['artist']
-	print(artistName)
-	return render_template('artist.html',artist=artistName) #just don't 404 bro
+	print(lastfmkey)
+	return render_template('artist.html',artist=artistName,lastfmkey=lastfmkey)
 
 if __name__ == '__main__':
 	init()

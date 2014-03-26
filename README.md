@@ -8,3 +8,13 @@ APIs Used
 --
  - iTunes Search
  - SendGrid
+ - last.fm  
+  
+###Example lastfmkey.json  
+This project requires a last.fm API key/account for certain artist-tracking functions. Drop a file like this into static/lastfmkey.json:  
+```json
+{
+	"apikey":"your_api_key_here",
+	"apisecret":"your_api_secret_here"
+}
+```
