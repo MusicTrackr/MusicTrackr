@@ -1,6 +1,5 @@
 #builtins
-import json
-import urllib.request
+import json, urllib.request
 from urllib.error import URLError
 from datetime import datetime, timedelta
 from ast import literal_eval
@@ -16,6 +15,7 @@ def init():
 	global artistf
 	global artists
 	global lastfmkey
+	artists = {}
 	githubUrl = 'https://www.github.com/kaikue/MusicAlert'
 	try:
 		with open('static/lastfmkey.json','r') as f:
@@ -29,11 +29,9 @@ def init():
 	except (SyntaxError,ValueError,TypeError):
 		print('Literal_eval error.')
 		artistf = open('artists.txt','w+')
-		artists = {}
 	except FileNotFoundError:
 		artistf = open('artists.txt','w+')
-		artists = {}
-	if artists == {}:
+	if artists == {} or type(artists) != dict:
 		print('Artists file empty or corrupt. Running with empty dict..')
 	today = datetime.today()
 	t = Timer(timedelta(days=1,hours=-today.hour,minutes=-today.minute,seconds=-today.second,microseconds=-today.microsecond).total_seconds(),update)
@@ -74,8 +72,7 @@ def getJson(url):
 
 def getArtistId(name):
 	#from input get artist id
-	plusName = name.replace(" ", "+")
-	dat = getJson("https://itunes.apple.com/search?term=" + plusName + '&entity=musicArtist')
+	dat = getJson("https://itunes.apple.com/search?term=" + name.replace(' ','+') + '&entity=musicArtist')
 	for i in range(0,len(dat['results'])-1):
 		if dat["results"][i]["artistName"].lower() == name.lower():
 			artistId = dat['results'][i]['artistId']
@@ -138,14 +135,6 @@ def home():
 			success = None
 		return render_template('index.html',error=error,success=success)
 	return render_template('index.html')
-
-'''@app.route('/artists.txt')
-def artiststxt():
-	artistf.truncate()
-	artistf.write(str(artists))
-	artistf.flush()
-	afcontents = artistf.read()
-	return afcontents'''
 
 @app.route('/artist')
 def artistPage():
