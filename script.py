@@ -94,7 +94,7 @@ def mailUser(address, artist, album, url):
 	#artist: artist's name (string)
 	#album: name of album (string)
 	#url: link to album (string)
-	s = sendgrid.SendGridClient('parasm', 'bcabooks')
+	s = sendgrid.SendGridClient('USERNAME', 'PASSWORD')
 	msg = sendgrid.Mail()
 	msg.add_to(address)
 	msg.set_subject("MusicTrackr: New Album Release")
